@@ -108,7 +108,7 @@ function App() {
 
   return (
     <div className='min-h-screen bg-amber-50 text-white flex items-center justify-center'>
-      <div className='w-full max-w-md space-y-6'>
+      <div className='w-full max-w-md space-y-6 mx-4 mt-4'>
 
         {/* Header */}
         <h1 className='text-3xl font-black text-center text-sky-400'>Weather Forecast </h1>
@@ -161,7 +161,7 @@ function App() {
 
               {/* 7 Day Forecast */}
               <div >
-                <h3 className='text-center border-t border-slate-200 py-4 text-slate-400'>7-day Forecast</h3>
+                <h3 className='text-center border-t border-slate-200 py-4 font-bold'>7 - Day Forecast</h3>
                 <div className='flex gap-2 flex-col'>
                   {weather.daily.map((item) => {
                     const { label, icon: DayIcon } =
