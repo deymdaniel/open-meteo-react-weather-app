@@ -104,7 +104,7 @@ function App() {
 
             < div className='flex flex-col gap-4 p-6 bg-slate-800/80 rounded-2xl border border-slate-200 text-center'>
 
-              <div className='flex justify-between text-left'>
+              <div className='flex justify-between text-left items-center'>
                 <div className='flex flex-col'>
                   <h2 className='text-xl'>{weather.city}, {weather.country}</h2>
                   <p className=' flex gap-2 items-center text-sm text-slate-400'><WeatherIcon className='w-6 h-6' />
