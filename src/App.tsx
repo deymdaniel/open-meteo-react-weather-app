@@ -12,6 +12,14 @@ import {
   CloudLightning
 } from 'lucide-react'
 
+interface DailyForecast {
+  date: string
+  dayName: string
+  maxTemp: number
+  minTemp: number
+  weatherCode: number
+}
+
 interface WeatherData {
   city: string
   country: string
@@ -19,6 +27,7 @@ interface WeatherData {
   humidity: number
   windSpeed: number
   weatherCode: number
+  daily: DailyForecast[]
 }
 
 function App() {
@@ -56,9 +65,26 @@ function App() {
 
       const { latitude, longitude, name, country } = geoData.results[0]
 
-      const weatherRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m`)
+      const weatherRes = await fetch(
+        `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=auto`
+      )
 
       const weatherData = await weatherRes.json()
+
+      const getDayName = (dateStr: string, index: number) => {
+        if (index === 0) return 'Today'
+        const date = new Date(dateStr)
+        return date.toLocaleDateString('en-US', { weekday: 'short' })
+      }
+      const formattedDaily: DailyForecast[] = weatherData.daily.time.map(
+        (date: string, index: number) => ({
+          date: date,
+          dayName: getDayName(date, index),
+          weatherCode: weatherData.daily.weather_code[index],
+          maxTemp: Math.round(weatherData.daily.temperature_2m_max[index]),
+          minTemp: Math.round(weatherData.daily.temperature_2m_min[index]),
+        })
+      )
 
       setWeather({
         city: name,
@@ -67,6 +93,7 @@ function App() {
         humidity: weatherData.current.relative_humidity_2m,
         windSpeed: weatherData.current.wind_speed_10m,
         weatherCode: weatherData.current.weather_code,
+        daily: formattedDaily,
       })
 
     }
@@ -129,6 +156,37 @@ function App() {
                   <Wind className="w-6 h-6" />
                   <span className="text-xs text-slate-400 block">Wind Speed</span>
                   <span className="text-lg font-bold">{weather.windSpeed} km/h</span>
+                </div>
+              </div>
+
+              {/* 7 Day Forecast */}
+              <div >
+                <h3 className='text-center border-t border-slate-200 py-4 text-slate-400'>7-day Forecast</h3>
+                <div className='flex gap-2 flex-col'>
+                  {weather.daily.map((item) => {
+                    const { label, icon: DayIcon } =
+                      getWeatherInfo(item.weatherCode)
+                    return (
+                      <div key={item.date} className='flex justify-between items-center p-3 bg-slate-900/50 rounded-xl'>
+
+
+
+                        <div className='flex items-center gap-2'>
+                          <p className='text-left  font-medium'> {item.dayName}</p>
+                          <DayIcon></DayIcon>
+                          <span className='text-xs text-slate-400'>{label}</span>
+                        </div>
+
+                        <div>
+                          <span className='text-slate-400'>{item.minTemp}°C</span>
+                          <span className='text-slate-400'> - </span>
+                          <span className='font-black'>{item.maxTemp}°C</span>
+                        </div>
+
+
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>
