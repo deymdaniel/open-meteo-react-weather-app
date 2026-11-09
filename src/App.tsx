@@ -25,7 +25,7 @@ function App() {
 
   const [cityInput, setCityInput] = useState('')
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: React.SubmitEvent) => {
     e.preventDefault()
     fetchWeather(cityInput)
   }
